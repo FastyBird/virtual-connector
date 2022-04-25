@@ -16,8 +16,8 @@
 namespace FastyBird\VirtualConnector\Schemas;
 
 use FastyBird\DevicesModule\Schemas as DevicesModuleSchemas;
-use FastyBird\VirtualConnector\Entities;
 use FastyBird\Metadata\Types as MetadataTypes;
+use FastyBird\VirtualConnector\Entities;
 
 /**
  * Virtual connector entity schema

@@ -2,6 +2,8 @@
 
 namespace Tests\Cases;
 
+use FastyBird\VirtualConnector\Hydrators;
+use FastyBird\VirtualConnector\Schemas;
 use Tester\Assert;
 
 require_once __DIR__ . '/../../../bootstrap.php';
@@ -17,7 +19,11 @@ final class ServicesTest extends BaseTestCase
 	{
 		$container = $this->createContainer();
 
-		Assert::true(true);
+		Assert::notNull($container->getByType(Hydrators\VirtualConnectorHydrator::class));
+		Assert::notNull($container->getByType(Hydrators\VirtualDeviceHydrator::class));
+
+		Assert::notNull($container->getByType(Schemas\VirtualConnectorSchema::class));
+		Assert::notNull($container->getByType(Schemas\VirtualDeviceSchema::class));
 	}
 
 }

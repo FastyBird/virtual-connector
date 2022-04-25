@@ -27,10 +27,7 @@ from fastybird_devices_module.entities.device import DeviceEntity
 from fastybird_metadata.types import ConnectorSource, ModuleSource, PluginSource
 
 # Library libs
-from fastybird_virtual_connector.types import (
-    CONNECTOR_NAME,
-    DEVICE_NAME,
-)
+from fastybird_virtual_connector.types import CONNECTOR_NAME, DEVICE_NAME
 
 
 class VirtualConnectorEntity(ConnectorEntity):

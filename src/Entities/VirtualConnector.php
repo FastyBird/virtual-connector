@@ -17,7 +17,6 @@ namespace FastyBird\VirtualConnector\Entities;
 
 use Doctrine\ORM\Mapping as ORM;
 use FastyBird\DevicesModule\Entities as DevicesModuleEntities;
-use FastyBird\VirtualConnector\Types;
 use FastyBird\Metadata\Types as MetadataTypes;
 
 /**

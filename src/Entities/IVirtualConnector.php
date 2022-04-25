@@ -16,7 +16,6 @@
 namespace FastyBird\VirtualConnector\Entities;
 
 use FastyBird\DevicesModule\Entities as DevicesModuleEntities;
-use FastyBird\VirtualConnector\Types;
 
 /**
  * Virtual connector entity interface
