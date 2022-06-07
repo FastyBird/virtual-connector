@@ -188,7 +188,7 @@ class VirtualConnector(IConnector):  # pylint: disable=too-many-instance-attribu
 
     # -----------------------------------------------------------------------------
 
-    def start(self) -> None:
+    async def start(self) -> None:
         """Start connector services"""
         self.__logger.info("Connector has been started")
 
@@ -213,7 +213,7 @@ class VirtualConnector(IConnector):  # pylint: disable=too-many-instance-attribu
 
     # -----------------------------------------------------------------------------
 
-    def write_property(  # pylint: disable=too-many-branches
+    async def write_property(  # pylint: disable=too-many-branches
         self,
         property_item: Union[DevicePropertyEntity, ChannelPropertyEntity],
         data: Dict,
@@ -222,7 +222,7 @@ class VirtualConnector(IConnector):  # pylint: disable=too-many-instance-attribu
 
     # -----------------------------------------------------------------------------
 
-    def write_control(
+    async def write_control(
         self,
         control_item: Union[ConnectorControlEntity, DeviceControlEntity, ChannelControlEntity],
         data: Optional[Dict],
