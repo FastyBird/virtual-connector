@@ -8,47 +8,38 @@
  * @author         Adam Kadlec <adam.kadlec@fastybird.com>
  * @package        FastyBird:VirtualConnector!
  * @subpackage     Entities
- * @since          0.1.0
+ * @since          1.0.0
  *
- * @date           25.04.22
+ * @date           15.10.23
  */
 
-namespace FastyBird\VirtualConnector\Entities;
+namespace FastyBird\Connector\Virtual\Entities;
 
 use Doctrine\ORM\Mapping as ORM;
-use FastyBird\DevicesModule\Entities as DevicesModuleEntities;
-use FastyBird\Metadata\Types as MetadataTypes;
+use FastyBird\Library\Metadata\Types as MetadataTypes;
+use FastyBird\Module\Devices\Entities as DevicesEntities;
 
 /**
  * @ORM\Entity
  */
-class VirtualConnector extends DevicesModuleEntities\Connectors\Connector implements IVirtualConnector
+class VirtualConnector extends DevicesEntities\Connectors\Connector
 {
 
-	public const CONNECTOR_TYPE = 'virtual';
+	public const TYPE = 'virtual';
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public function getType(): string
 	{
-		return self::CONNECTOR_TYPE;
+		return self::TYPE;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public function getDiscriminatorName(): string
 	{
-		return self::CONNECTOR_TYPE;
+		return self::TYPE;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function getSource(): MetadataTypes\ModuleSourceType|MetadataTypes\PluginSourceType|MetadataTypes\ConnectorSourceType
+	public function getSource(): MetadataTypes\ConnectorSource
 	{
-		return MetadataTypes\ConnectorSourceType::get(MetadataTypes\ConnectorSourceType::SOURCE_CONNECTOR_VIRTUAL);
+		return MetadataTypes\ConnectorSource::get(MetadataTypes\ConnectorSource::SOURCE_CONNECTOR_VIRTUAL);
 	}
 
 }

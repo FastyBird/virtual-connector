@@ -8,47 +8,85 @@
  * @author         Adam Kadlec <adam.kadlec@fastybird.com>
  * @package        FastyBird:VirtualConnector!
  * @subpackage     Entities
- * @since          0.1.0
+ * @since          1.0.0
  *
- * @date           25.04.22
+ * @date           15.10.23
  */
 
-namespace FastyBird\VirtualConnector\Entities;
+namespace FastyBird\Connector\Virtual\Entities;
 
 use Doctrine\ORM\Mapping as ORM;
-use FastyBird\DevicesModule\Entities as DevicesModuleEntities;
-use FastyBird\Metadata\Types as MetadataTypes;
+use FastyBird\Connector\Virtual\Types;
+use FastyBird\Library\Metadata\Exceptions as MetadataExceptions;
+use FastyBird\Library\Metadata\Types as MetadataTypes;
+use FastyBird\Module\Devices\Entities as DevicesEntities;
+use FastyBird\Module\Devices\Exceptions as DevicesExceptions;
+use function floatval;
+use function is_numeric;
 
 /**
  * @ORM\Entity
  */
-class VirtualDevice extends DevicesModuleEntities\Devices\Device implements IVirtualDevice
+class VirtualDevice extends DevicesEntities\Devices\Device
 {
 
-	public const DEVICE_TYPE = 'virtual';
+	public const TYPE = 'virtual';
 
-	/**
-	 * {@inheritDoc}
-	 */
+	private const STATE_PROCESSING_DELAY = 120.0;
+
 	public function getType(): string
 	{
-		return self::DEVICE_TYPE;
+		return self::TYPE;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public function getDiscriminatorName(): string
 	{
-		return self::DEVICE_TYPE;
+		return self::TYPE;
+	}
+
+	public function getSource(): MetadataTypes\ConnectorSource
+	{
+		return MetadataTypes\ConnectorSource::get(MetadataTypes\ConnectorSource::SOURCE_CONNECTOR_VIRTUAL);
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * @return array<VirtualChannel>
 	 */
-	public function getSource(): MetadataTypes\ModuleSourceType|MetadataTypes\PluginSourceType|MetadataTypes\ConnectorSourceType
+	public function getChannels(): array
 	{
-		return MetadataTypes\ConnectorSourceType::get(MetadataTypes\ConnectorSourceType::SOURCE_CONNECTOR_VIRTUAL);
+		$channels = [];
+
+		foreach (parent::getChannels() as $channel) {
+			if ($channel instanceof VirtualChannel) {
+				$channels[] = $channel;
+			}
+		}
+
+		return $channels;
+	}
+
+	/**
+	 * @throws DevicesExceptions\InvalidState
+	 * @throws MetadataExceptions\InvalidArgument
+	 * @throws MetadataExceptions\InvalidState
+	 */
+	public function getStateProcessingDelay(): float
+	{
+		$property = $this->properties
+			->filter(
+			// phpcs:ignore SlevomatCodingStandard.Files.LineLength.LineTooLong
+				static fn (DevicesEntities\Devices\Properties\Property $property): bool => $property->getIdentifier() === Types\DevicePropertyIdentifier::STATE_PROCESSING_DELAY
+			)
+			->first();
+
+		if (
+			$property instanceof DevicesEntities\Devices\Properties\Variable
+			&& is_numeric($property->getValue())
+		) {
+			return floatval($property->getValue());
+		}
+
+		return self::STATE_PROCESSING_DELAY;
 	}
 
 }
