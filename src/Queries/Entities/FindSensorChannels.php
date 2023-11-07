@@ -1,7 +1,7 @@
 <?php declare(strict_types = 1);
 
 /**
- * FindPresetChannels.php
+ * FindSensorChannels.php
  *
  * @license        More in LICENSE.md
  * @copyright      https://www.fastybird.com
@@ -13,14 +13,14 @@
  * @date           26.10.23
  */
 
-namespace FastyBird\Connector\Virtual\Queries;
+namespace FastyBird\Connector\Virtual\Queries\Entities;
 
 use FastyBird\Connector\Virtual\Entities;
 
 /**
- * Find device presets channels entities query
+ * Find device sensors channels entities query
  *
- * @template T of Entities\Channels\Preset
+ * @template T of Entities\Channels\Sensors
  * @extends  FindChannels<T>
  *
  * @package        FastyBird:VirtualConnector!
@@ -28,7 +28,7 @@ use FastyBird\Connector\Virtual\Entities;
  *
  * @author         Adam Kadlec <adam.kadlec@fastybird.com>
  */
-class FindPresetChannels extends FindChannels
+class FindSensorChannels extends FindChannels
 {
 
 }

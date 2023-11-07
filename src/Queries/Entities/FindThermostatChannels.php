@@ -13,7 +13,7 @@
  * @date           26.10.23
  */
 
-namespace FastyBird\Connector\Virtual\Queries;
+namespace FastyBird\Connector\Virtual\Queries\Entities;
 
 use FastyBird\Connector\Virtual\Entities;
 
