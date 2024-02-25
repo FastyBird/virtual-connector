@@ -1,7 +1,7 @@
 <?php declare(strict_types = 1);
 
 /**
- * Entity.php
+ * MessageBuilder.php
  *
  * @license        More in LICENSE.md
  * @copyright      https://www.fastybird.com
@@ -15,53 +15,49 @@
 
 namespace FastyBird\Connector\Virtual\Helpers;
 
-use FastyBird\Connector\Virtual\Entities;
 use FastyBird\Connector\Virtual\Exceptions;
+use FastyBird\Connector\Virtual\Queue;
+use FastyBird\Connector\Virtual\Queue\Messages\Message as T;
 use Orisai\ObjectMapper;
 
 /**
- * Entity helper
+ * Message builder
  *
  * @package        FastyBird:VirtualConnector!
  * @subpackage     Helpers
  *
  * @author         Adam Kadlec <adam.kadlec@fastybird.com>
  */
-final class Entity
+final readonly class MessageBuilder
 {
 
 	public function __construct(
-		private readonly ObjectMapper\Processing\Processor $entityMapper,
+		private ObjectMapper\Processing\Processor $processor,
 	)
 	{
 	}
 
 	/**
-	 * @template T of Entities\Messages\Entity
+	 * @template T of Queue\Messages\Message
 	 *
-	 * @param class-string<T> $entity
+	 * @param class-string<T> $message
 	 * @param array<mixed> $data
-	 *
-	 * @return T
 	 *
 	 * @throws Exceptions\Runtime
 	 */
-	public function create(
-		string $entity,
-		array $data,
-	): Entities\Messages\Entity
+	public function create(string $message, array $data): Queue\Messages\Message
 	{
 		try {
 			$options = new ObjectMapper\Processing\Options();
 			$options->setAllowUnknownFields();
 
-			return $this->entityMapper->process($data, $entity, $options);
+			return $this->processor->process($data, $message, $options);
 		} catch (ObjectMapper\Exception\InvalidData $ex) {
 			$errorPrinter = new ObjectMapper\Printers\ErrorVisualPrinter(
 				new ObjectMapper\Printers\TypeToStringConverter(),
 			);
 
-			throw new Exceptions\Runtime('Could not map data to entity: ' . $errorPrinter->printError($ex));
+			throw new Exceptions\Runtime('Could not map data to message: ' . $errorPrinter->printError($ex));
 		}
 	}
 

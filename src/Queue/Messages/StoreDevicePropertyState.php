@@ -7,40 +7,41 @@
  * @copyright      https://www.fastybird.com
  * @author         Adam Kadlec <adam.kadlec@fastybird.com>
  * @package        FastyBird:VirtualConnector!
- * @subpackage     Entities
+ * @subpackage     Queue
  * @since          1.0.0
  *
  * @date           22.11.22
  */
 
-namespace FastyBird\Connector\Virtual\Entities\Messages;
+namespace FastyBird\Connector\Virtual\Queue\Messages;
 
-use FastyBird\Library\Bootstrap\ObjectMapper as BootstrapObjectMapper;
+use FastyBird\Library\Application\ObjectMapper as ApplicationObjectMapper;
+use FastyBird\Library\Metadata\Types as MetadataTypes;
 use Orisai\ObjectMapper;
 use Ramsey\Uuid;
 use function is_string;
 
 /**
- * Device status message entity
+ * Device status message
  *
  * @package        FastyBird:VirtualConnector!
- * @subpackage     Entities
+ * @subpackage     Queue
  *
  * @author         Adam Kadlec <adam.kadlec@fastybird.com>
  */
-final class StoreDevicePropertyState implements Entity
+final readonly class StoreDevicePropertyState implements Message
 {
 
 	public function __construct(
-		#[BootstrapObjectMapper\Rules\UuidValue()]
-		private readonly Uuid\UuidInterface $connector,
-		#[BootstrapObjectMapper\Rules\UuidValue()]
-		private readonly Uuid\UuidInterface $device,
+		#[ApplicationObjectMapper\Rules\UuidValue()]
+		private Uuid\UuidInterface $connector,
+		#[ApplicationObjectMapper\Rules\UuidValue()]
+		private Uuid\UuidInterface $device,
 		#[ObjectMapper\Rules\AnyOf([
-			new BootstrapObjectMapper\Rules\UuidValue(),
+			new ApplicationObjectMapper\Rules\UuidValue(),
 			new ObjectMapper\Rules\StringValue(notEmpty: true),
 		])]
-		private readonly Uuid\UuidInterface|string $property,
+		private Uuid\UuidInterface|string $property,
 		#[ObjectMapper\Rules\AnyOf([
 			new ObjectMapper\Rules\FloatValue(),
 			new ObjectMapper\Rules\IntValue(),
@@ -48,7 +49,12 @@ final class StoreDevicePropertyState implements Entity
 			new ObjectMapper\Rules\BoolValue(),
 			new ObjectMapper\Rules\NullValue(castEmptyString: true),
 		])]
-		private readonly float|int|string|bool|null $value,
+		private float|int|string|bool|null $value,
+		#[ObjectMapper\Rules\AnyOf([
+			new ObjectMapper\Rules\InstanceOfValue(type: MetadataTypes\Sources\Connector::class),
+			new ObjectMapper\Rules\InstanceOfValue(type: MetadataTypes\Sources\Addon::class),
+		])]
+		private MetadataTypes\Sources\Source $source,
 	)
 	{
 	}
@@ -77,6 +83,11 @@ final class StoreDevicePropertyState implements Entity
 		return $this->value;
 	}
 
+	public function getSource(): MetadataTypes\Sources\Source
+	{
+		return $this->source;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -87,6 +98,7 @@ final class StoreDevicePropertyState implements Entity
 			'device' => $this->getDevice()->toString(),
 			'property' => is_string($this->getProperty()) ? $this->getProperty() : $this->getProperty()->toString(),
 			'value' => $this->getValue(),
+			'source' => $this->getSource()->value,
 		];
 	}
 

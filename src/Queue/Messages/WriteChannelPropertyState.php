@@ -7,37 +7,43 @@
  * @copyright      https://www.fastybird.com
  * @author         Adam Kadlec <adam.kadlec@fastybird.com>
  * @package        FastyBird:VirtualConnector!
- * @subpackage     Entities
+ * @subpackage     Queue
  * @since          1.0.0
  *
  * @date           17.10.23
  */
 
-namespace FastyBird\Connector\Virtual\Entities\Messages;
+namespace FastyBird\Connector\Virtual\Queue\Messages;
 
-use FastyBird\Library\Bootstrap\ObjectMapper as BootstrapObjectMapper;
+use FastyBird\Library\Application\ObjectMapper as ApplicationObjectMapper;
+use Orisai\ObjectMapper;
 use Ramsey\Uuid;
 
 /**
- * Write updated channel property state to device entity
+ * Write updated channel property state to device message
  *
  * @package        FastyBird:VirtualConnector!
- * @subpackage     Entities
+ * @subpackage     Queue
  *
  * @author         Adam Kadlec <adam.kadlec@fastybird.com>
  */
-final class WriteChannelPropertyState implements Entity
+final readonly class WriteChannelPropertyState implements Message
 {
 
 	public function __construct(
-		#[BootstrapObjectMapper\Rules\UuidValue()]
-		private readonly Uuid\UuidInterface $connector,
-		#[BootstrapObjectMapper\Rules\UuidValue()]
-		private readonly Uuid\UuidInterface $device,
-		#[BootstrapObjectMapper\Rules\UuidValue()]
-		private readonly Uuid\UuidInterface $channel,
-		#[BootstrapObjectMapper\Rules\UuidValue()]
-		private readonly Uuid\UuidInterface $property,
+		#[ApplicationObjectMapper\Rules\UuidValue()]
+		private Uuid\UuidInterface $connector,
+		#[ApplicationObjectMapper\Rules\UuidValue()]
+		private Uuid\UuidInterface $device,
+		#[ApplicationObjectMapper\Rules\UuidValue()]
+		private Uuid\UuidInterface $channel,
+		#[ApplicationObjectMapper\Rules\UuidValue()]
+		private Uuid\UuidInterface $property,
+		#[ObjectMapper\Rules\AnyOf([
+			new ObjectMapper\Rules\MappedObjectValue(class: State::class),
+			new ObjectMapper\Rules\NullValue(),
+		])]
+		private State|null $state,
 	)
 	{
 	}
@@ -62,6 +68,11 @@ final class WriteChannelPropertyState implements Entity
 		return $this->property;
 	}
 
+	public function getState(): State|null
+	{
+		return $this->state;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -72,6 +83,7 @@ final class WriteChannelPropertyState implements Entity
 			'device' => $this->getDevice()->toString(),
 			'channel' => $this->getChannel()->toString(),
 			'property' => $this->getProperty()->toString(),
+			'state' => $this->getState()?->toArray(),
 		];
 	}
 
